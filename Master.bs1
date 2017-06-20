@@ -1,0 +1,122 @@
+' {$STAMP BS1}
+'W0 = UltraRechts Ergebnis
+'W1 = UltraVorne Ergebnis
+'W2 = ServoPause
+SYMBOL Ultra = 7
+SYMBOL UltraVorne = 6
+SYMBOL UltraRechts = 5
+SYMBOL LichtSchranke = 4
+SYMBOL ServoMotor = 3
+SYMBOL ElektroMotor1 = 2
+SYMBOL ElektroMotor2 = 1
+SYMBOL Signal = 0
+SYMBOL ServoPause = W2
+OUTPUT Ultra
+OUTPUT Signal
+OUTPUT ServoMotor
+OUTPUT ElektroMotor1
+OUTPUT ElektroMotor2
+INPUT UltraVorne
+INPUT UltraRechts
+INPUT LichtSchranke
+INPUT Signal
+W2 = 200
+GOTO StartLoop
+END
+
+
+StartLoop:
+  GOSUB UltraVorneMessen
+  IF W1 < 10 THEN GOTO DriveLoop
+  GOTO StartLoop
+  RETURN
+
+DriveLoop:
+  GOSUB UltraVorneMessen
+  IF W1 < 23 THEN GOTO TurnLoop
+  GOSUB HoldLine
+  GOTO DriveLoop
+  RETURN
+
+TurnLoop:
+  END
+  RETURN
+
+HoldLine:
+  IF LichtSchranke=1 THEN ServoLinks
+  GOSUB VorwaertsFahren  
+  GOSUB ServoMinimalRechts
+  RETURN
+
+ServoLinks:
+  PULSOUT ServoMotor, 200
+  PAUSE ServoPause
+  LOW ServoMotor
+  RETURN
+
+ServoRechts:
+  PULSOUT ServoMotor, 100
+  PAUSE ServoPause
+  LOW ServoMotor
+  RETURN
+
+ServoMinimalRechts:
+  PULSOUT ServoMotor, 100
+  PAUSE 50
+  LOW ServoMotor
+  RETURN
+
+VorwaertsFahren:
+  HIGH ElektroMotor1
+  LOW ElektroMotor2
+  RETURN
+
+RuekwaertsFahren:
+  LOW ElektroMotor1
+  HIGH ElektroMotor2
+  RETURN
+
+Stoppen:
+  LOW ElektroMotor1
+  LOW ElektroMotor2
+  RETURN
+
+UltraRechtsMessen:
+    LOW Ultra
+    PULSOUT Ultra, 1
+    PULSIN UltraRechts, 1, W0
+    W0 = W0 / 6
+    RETURN
+
+UltraVorneMessen:
+    LOW Ultra
+    PULSOUT Ultra, 1
+    PULSIN UltraVorne, 1, W1
+    W1 = W1 / 6
+    RETURN
+
+LinksBlinkenAn:
+  SEROUT Signal, T2400, (11)
+  RETURN
+
+LinksBlinkenAus:
+  SEROUT Signal, T2400, (10)
+  RETURN
+
+RechtsBlinkenAn:
+  SEROUT Signal, T2400, (21)
+  RETURN
+
+RechtsBlinkenAus:
+  SEROUT Signal, T2400, (20)
+  RETURN
+
+BremsLichtAus:
+  SEROUT Signal, T2400, (30)
+  RETURN
+
+BremsLichtAn:
+  SEROUT Signal, T2400, (31)
+  RETURN
+
+END
