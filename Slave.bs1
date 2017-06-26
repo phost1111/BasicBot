@@ -1,0 +1,125 @@
+' {$STAMP BS1}
+' B0 = SignalIn
+' B1 = LinksStatus
+' B2 = RechtsStatus
+' B3 = BremsStatus
+SYMBOL Signal = 0
+SYMBOL BlinkerRechts = 1
+SYMBOL BlinkerLinks = 2
+SYMBOL BremsLichter = 3
+B1 = 0
+B2 = 0
+B3 = 0
+
+SignalCheckLoop:
+  SERIN Signal, T2400, B0
+  IF B0=11 THEN LinksAn
+  IF B0=10 THEN LinksAus
+  IF B0=21 THEN RechtsAn
+  IF B0=20 THEN RechtsAus
+  IF B0=31 THEN BremsAn
+  IF B0=30 THEN BremsAus
+  GOTO BlinkLoop
+
+LinksAn:
+  B1=1
+  GOTO BlinkLoop
+
+LinksAus:
+  B1=0
+  GOTO BlinkLoop
+
+RechtAn:
+  B2=1
+  GOTO BlinkLoop
+
+RechtsAus:
+  B2=0
+  GOTO BlinkLoop
+
+BremsAn:
+  B3=1
+  GOTO BlinkLoop
+
+BremsAus:
+  B3=0
+  GOTO BlinkLoop
+
+BlinkLoop:
+  IF B1=0 AND B2=0 AND B3=0 THEN AllOffAus
+  IF B1=0 AND B2=0 AND B3=1 THEN AllOffAn
+  IF B1=1 AND B2=0 AND B3=1 THEN LinksOnlyAn
+  IF B1=1 AND B2=0 AND B3=0 THEN LinksOnlyAus
+  IF B1=1 AND B2=1 AND B3=1 THEN AllOnAn
+  IF B1=1 AND B2=1 AND B3=0 THEN AllOnAus
+  IF B1=0 AND B2=1 AND B3=1 THEN RechtsOnlyAn
+  IF B1=0 AND B2=1 AND B3=0 THEN RechtsOnlyAus
+  GOTO SignalCheckLoop
+
+AllOffAn:
+  HIGH BremsLichter
+  LOW BlinkerLinks
+  LOW BlinkerRechts
+  GOTO SignalCheckLoop
+
+AllOffAus:
+  low BremsLichter
+  LOW BlinkerLinks
+  LOW BlinkerRechts
+  GOTO SignalCheckLoop
+
+LinksOnlyAn:
+  HIGH BremsLichter
+  HIGH BlinkerLinks
+  LOW BlinkerRechts
+  PAUSE 500
+  LOW BlinkerLinks
+  PAUSE 500
+  GOTO SignalCheckLoop
+
+LinksOnlyAus:
+  low BremsLichter
+  HIGH BlinkerLinks
+  LOW BlinkerRechts
+  PAUSE 500
+  LOW BlinkerLinks
+  PAUSE 500
+  GOTO SignalCheckLoop
+
+AllOnAn:
+  HIGH BremsLichter
+  HIGH BlinkerLinks
+  HIGH BlinkerRechts
+  PAUSE 500
+  LOW BlinkerLinks
+  LOW BlinkerRechts
+  PAUSE 500
+  GOTO SignalCheckLoop
+
+AllOnAus:
+  low BremsLichter
+  HIGH BlinkerLinks
+  HIGH BlinkerRechts
+  PAUSE 500
+  LOW BlinkerLinks
+  LOW BlinkerRechts
+  PAUSE 500
+  GOTO SignalCheckLoop
+
+RechtsOnlyAn:
+  HIGH BremsLichter
+  LOW BlinkerLinks
+  HIGH BlinkerRechts
+  PAUSE 500
+  LOW BlinkerRechts
+  PAUSE 500
+  GOTO SignalCheckLoop
+
+RechtsOnlyAus:
+  low BremsLichter
+  LOW BlinkerLinks
+  HIGH BlinkerRechts
+  PAUSE 500
+  LOW BlinkerRechts
+  PAUSE 500
+  GOTO SignalCheckLoop
