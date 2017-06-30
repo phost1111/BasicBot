@@ -80,10 +80,75 @@ ParkSearchLoopStart:
   GOTO ParkSearchLoop
 ParkSearchLoop:
   SEROUT Signal, T2400, (1)
+  LOW Ultra
+  PULSOUT Ultra, 1
+  PULSIN UltraRechts, 1, W0
+  W0 = W0 / 6
+  IF W0 > 30 THEN ParkFoundLoop
   PULSOUT ServoMotor, 140
   PAUSE 75
   LOW ServoMotor
+  IF PIN4=1 THEN AusgleichenSearch
+  ParkSearchCont:
   SEROUT Signal, T2400, (1)
+  GOTO ParkSearchLoop
+AusgleichenSearch:
+  PULSOUT ServoMotor, 170
+  PAUSE 120
+  LOW ServoMotor
+  GOTO ParkSearchCont
+ParkFoundLoop:
+  SEROUT Signal, T2400, (1)
+  LOW Ultra
+  PULSOUT Ultra, 1
+  PULSIN UltraRechts, 1, W0
+  W0 = W0 / 6
+  IF W0 < 30 THEN ParkEndLoop
+  PULSOUT ServoMotor, 140
+  PAUSE 75
+  LOW ServoMotor
+  IF PIN4=1 THEN AusgleichenFound
+  ParkFoundCont:
+  SEROUT Signal, T2400, (1)
+  GOTO ParkFoundLoop
+AusgleichenFound:
+  PULSOUT ServoMotor, 170
+  PAUSE 120
+  LOW ServoMotor
+  GOTO ParkFoundCont
+ParkEndLoop:
+  SEROUT Signal, T2400, (5)
+  LOW ElektroMotor1
+  low ElektroMotor2
+  SEROUT Signal, T2400, (5)
+  PULSOUT ServoMotor, 120
+  SEROUT Signal, T2400, (5)
+  PAUSE 3000
+  SEROUT Signal, T2400, (3)
+  LOW ServoMotor
+  SEROUT Signal, T2400, (3)
+  HIGH ElektroMotor1
+  LOW ElektroMotor2
+  PAUSE 3000
+  SEROUT Signal, T2400, (5)
+  low ElektroMotor1
+  LOW ElektroMotor2
+  SEROUT Signal, T2400, (5)
+  PULSOUT ServoMotor, 180
+  PAUSE 3000
+  SEROUT Signal, T2400, (2)
+  LOW ServoMotor
+  SEROUT Signal, T2400, (2)
+  HIGH ElektroMotor1
+  LOW ElektroMotor2
+  SEROUT Signal, T2400, (2)
+  PAUSE 3000
+  low ElektroMotor1
+  LOW ElektroMotor2
+  SEROUT Signal, T2400, (1)
+  SEROUT Signal, T2400, (1)
+  SEROUT Signal, T2400, (1)
+  END
 ServoLinks:
   PULSOUT ServoMotor, 180
   PAUSE ServoPause
