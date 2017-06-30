@@ -41,118 +41,82 @@ StartLoop:
   PULSOUT Ultra, 1
   PULSIN UltraVorne, 1, W1
   W1 = W1 / 6
-  IF W1 < 20 THEN DriveLoop
+  IF W1 < 25 THEN DriveLoop
   GOTO StartLoop
-  RETURN
-
 DriveLoop:
   LOW Ultra
   PULSOUT Ultra, 1
   PULSIN UltraVorne, 1, W1
   W1 = W1 / 6
-  IF W1 < 9 THEN TurnLoop
+  IF W1 < 15 THEN TurnLoop
   LOW ElektroMotor1
   HIGH ElektroMotor2
   PAUSE 200
   GOTO DriveLoop
-
 TurnLoop:
   LOW ElektroMotor1
   LOW ElektroMotor2
-  W3 = 1
-  W4 = 1
-  W5 = 1
-  W6 = W3 + W4*2 + W5*4 + 1
-  SEROUT Signal, T2400, (W6)
-  GOTO TurnLoop
-  RETURN
-
-HoldLine:
-  IF PIN4=1 THEN ServoMinimalLinks
-  GOSUB VorwaertsFahren
-  GOSUB ServoMinimalRechts
-  RETURN
-
+  SEROUT Signal, T2400, (5)
+  PULSOUT ServoMotor, 180
+  SEROUT Signal, T2400, (5)
+  PAUSE 2500
+  SEROUT Signal, T2400, (5)
+  LOW ServoMotor
+  SEROUT Signal, T2400, (2)
+  LOW ElektroMotor1
+  HIGH ElektroMotor2
+  SEROUT Signal, T2400, (2)
+  PAUSE 6500
+  SEROUT Signal, T2400, (5)
+  LOW ElektroMotor1
+  LOW ElektroMotor2
+  SEROUT Signal, T2400, (5)
+  GOTO ParkSearchLoopStart
+ParkSearchLoopStart:
+  SEROUT Signal, T2400, (1)
+  SEROUT Signal, T2400, (1)
+  LOW ElektroMotor1
+  HIGH ElektroMotor2
+  GOTO ParkSearchLoop
+ParkSearchLoop:
+  SEROUT Signal, T2400, (1)
+  PULSOUT ServoMotor, 140
+  PAUSE 75
+  LOW ServoMotor
+  SEROUT Signal, T2400, (1)
 ServoLinks:
   PULSOUT ServoMotor, 180
   PAUSE ServoPause
   LOW ServoMotor
-  RETURN
-
 ServoRechts:
   PULSOUT ServoMotor, 120
   PAUSE ServoPause
   LOW ServoMotor
-  RETURN
-
 ServoMinimalRechts:
   PULSOUT ServoMotor, 120
   PAUSE 50
   LOW ServoMotor
-  RETURN
-
 ServoMinimalLinks:
   PULSOUT ServoMotor, 180
   PAUSE 50
   LOW ServoMotor
-  RETURN
-
 VorwaertsFahren:
   LOW ElektroMotor1
   HIGH ElektroMotor2
-  RETURN
-
 RuekwaertsFahren:
   HIGH ElektroMotor1
   LOW ElektroMotor2
-  RETURN
-
-Stoppen:
-  LOW ElektroMotor1
-  LOW ElektroMotor2
-  RETURN
-
 UltraRechtsMessen:
   LOW Ultra
   PULSOUT Ultra, 1
   PULSIN UltraRechts, 1, W0
   W0 = W0 / 6
-  RETURN
-
 UltraVorneMessen:
   LOW Ultra
   PULSOUT Ultra, 1
   PULSIN UltraVorne, 1, W1
   W1 = W1 / 6
-  RETURN
-
-LinksBlinkenAn:
-  W3 = 1
-  RETURN
-
-LinksBlinkenAus:
-  W3 = 0
-  RETURN
-
-RechtsBlinkenAn:
-  W4 = 1
-  RETURN
-
-RechtsBlinkenAus:
-  W4= 0
-  RETURN
-
-BremsLichtAus:
-  W5 = 0
-  RETURN
-
-BremsLichtAn:
-  W5 = 1
-  RETURN
-
 SendLEDInfo:
-  W6 = W3 + W4*2 + W5*4
+  W6 = W3 + W4*2 + W5*4 + 1
   SEROUT Signal, T2400, (W6)
-  RETURN
-
 END
