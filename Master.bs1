@@ -34,7 +34,13 @@ END
 
 
 StartLoop:
-  GOSUB UltraVorneMessen
+  PULSOUT ServoMotor, 150
+  PAUSE 100
+  LOW ServoMotor
+  LOW Ultra
+  PULSOUT Ultra, 1
+  PULSIN UltraVorne, 1, W1
+  W1 = W1 / 6
   IF W1 < 20 THEN DriveLoop
   GOTO StartLoop
   RETURN
@@ -51,7 +57,14 @@ DriveLoop:
   GOTO DriveLoop
 
 TurnLoop:
-  END
+  LOW ElektroMotor1
+  LOW ElektroMotor2
+  W3 = 1
+  W4 = 1
+  W5 = 1
+  W6 = W3 + W4*2 + W5*4 + 1
+  SEROUT Signal, T2400, (W6)
+  GOTO TurnLoop
   RETURN
 
 HoldLine:
@@ -138,7 +151,7 @@ BremsLichtAn:
   RETURN
 
 SendLEDInfo:
-  W6 = W3 + W4*2 + W5*4 + 1
+  W6 = W3 + W4*2 + W5*4
   SEROUT Signal, T2400, (W6)
   RETURN
 
