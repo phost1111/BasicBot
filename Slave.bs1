@@ -10,19 +10,19 @@ B1 = 0
 
 SignalCheckLoop:
   SERIN Signal, T2400, B0
-  IF B0<>0 THEN Check
+  IF B0<>0 THEN Change
   Cont:
-  IF B0=0 THEN AllOffAus
-  IF B0=4 THEN AllOffAn
-  IF B0=1 THEN LinksOnlyAus
-  IF B0=5 THEN LinksOnlyAn
-  IF B0=3 THEN AllOnAus
-  IF B0=7 THEN AllOnAn
-  IF B0=2 THEN RechtsOnlyAus
-  IF B0=6 THEN RechtsOnlyAn
+  IF B1=0 THEN AllOffAus
+  IF B1=4 THEN AllOffAn
+  IF B1=1 THEN LinksOnlyAus
+  IF B1=5 THEN LinksOnlyAn
+  IF B1=3 THEN AllOnAus
+  IF B1=7 THEN AllOnAn
+  IF B1=2 THEN RechtsOnlyAus
+  IF B1=6 THEN RechtsOnlyAn
   GOTO SignalCheckLoop
 
-Check:
+Change:
   B1 = B0 - 1
   GOTO Cont
 
