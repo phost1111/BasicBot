@@ -5,6 +5,7 @@
 'W3 = LEDLinks
 'W4 = LEDRechts
 'W5 = Brems
+'W6 = LEDAlle
 SYMBOL Ultra = 7
 SYMBOL UltraVorne = 6
 SYMBOL UltraRechts = 5
@@ -27,6 +28,7 @@ W2 = 200
 W3 = 0
 W4 = 0
 W5 = 0
+W6 = 0
 GOTO StartLoop
 END
 
@@ -133,6 +135,11 @@ BremsLichtAus:
 
 BremsLichtAn:
   W5 = 1
+  RETURN
+
+SendLEDInfo:
+  W6 = W3 + W4*2 + W5*4 + 1
+  SEROUT Signal, T2400, (W6)
   RETURN
 
 END
